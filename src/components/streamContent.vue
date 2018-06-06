@@ -37,7 +37,7 @@
         </md-button>
       </div>
     </md-toolbar>
-    <md-content class="backlog md-scrollbar">
+    <md-content class="backlog">
       <md-empty-state
         v-if="!orderedBacklog.length"
         :md-label="`Nothing for: ${streamId}`"
@@ -139,18 +139,19 @@ export default {
   overflow: auto;
 }
 .backlog__line-container.hljs {
-  padding: 0;
+  padding: 5px 0;
 }
 .backlog__line-container {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 .backlog__line-timestamp {
-  width: 105px;
+  width: 115px;
   font-size: 0.8em;
   padding-left: 5px;
+  flex-shrink: 0;
 }
 .backlog__line-container {
   line-height: 1.1em;
@@ -161,6 +162,7 @@ export default {
 }
 .backlog__line-content {
   padding-left: 5px;
+  word-break: break-word;
 }
 .stream-content__filter {
   max-width: 200px;
