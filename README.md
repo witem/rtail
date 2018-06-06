@@ -1,5 +1,8 @@
 # `r-tail`
 
+[![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url]
+[![Issues][issues-image]][issues-url] [![License][license-image]]
+
 ### Fork original rtail(https://github.com/kilianc/rtail) with fixes and improvments
 
 ## Terminal output to the browser in seconds, using UNIX pipes.
@@ -134,3 +137,12 @@ _This software is released under the MIT license cited below_.
     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
+
+[npm-image]: http://img.shields.io/npm/v/r-tail.svg
+[issues-image]: https://img.shields.io/github/issues/badges/r-tail.svg
+[license-image]: https://img.shields.io/npm/l/r-tail.svg
+[downloads-image]: http://img.shields.io/npm/dm/r-tail.svg
+
+[npm-url]: https://npmjs.org/package/r-tail
+[issues-url]: https://github.com/witem/rtail/issues
+
