@@ -15,7 +15,7 @@
         <md-icon class="md-primary">share</md-icon>
         <md-tooltip md-direction="bottom">Share link</md-tooltip>
         <input
-          id="shareLink"
+          ref="shareLink"
           :value="shareUrl"
           type="hidden">
       </md-button>
@@ -121,16 +121,16 @@ export default {
 
   computed: {
     ...mapGetters(['settingIsActive']),
-    ...mapState({
-      fontSize: state => state.settings.fontSize,
-      activeStreams: state => state.activeStreams,
-      shareUrl: state => `${window.location.origin}/#/streams/${JSON.stringify(state.activeStreams)}`,
-    }),
+    ...mapState('settings', ['fontSize']),
+    ...mapState(['activeStreams']),
+    shareUrl() {
+      return `${window.location.origin}/#/streams/${JSON.stringify(this.activeStreams)}`;
+    },
   },
 
   methods: {
     changeFontsize(type) {
-      let { fontSize } = this.$store.state.settings;
+      let { fontSize } = this.fontSize;
       if (type === 0) {
         fontSize = this.defaultFontSize;
       } else {
@@ -151,7 +151,7 @@ export default {
     },
 
     copyUrl() {
-      const testingCodeToCopy = document.querySelector('#shareLink');
+      const testingCodeToCopy = this.$refs.shareLink;
       testingCodeToCopy.setAttribute('type', 'text');
       testingCodeToCopy.select();
 

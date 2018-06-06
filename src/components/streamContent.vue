@@ -99,12 +99,12 @@ export default {
       'activeStreamIsFirst',
     ]),
     ...mapState({
-      orderedBacklog(state) {
-        return this.$store.getters.backlogDESC(this.$props.streamId);
-      },
       isloadingComplete: state => state.isStreamsLoaded,
       fontSize: state => state.settings.fontSize,
     }),
+    orderedBacklog(state) {
+      return this.$store.getters.backlogDESC(this.streamId);
+    },
   },
   mounted() {
     this.$nextTick(function () {

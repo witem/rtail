@@ -79,7 +79,7 @@ describe('rtail-server.js', function () {
           return;
         }
 
-        assert.match(body, /ng-app="app"/);
+        assert.match(body, /id='app'/);
         done(err);
       });
     }, 1000);
