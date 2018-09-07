@@ -47,42 +47,38 @@
       <div
         v-if="orderedBacklog.length"
         class="backlog__wrapper">
-        <div
-          v-for="line in backlogFilter(orderedBacklog)"
-          :key="line.uid"
-          class="backlog__line-container hljs">
+        <transition-group name="backlog__line-transition" tag="div">
           <div
-            v-if="showTimestamp"
-            class="backlog__line-timestamp">
-            {{ line.timestamp | dateFormat }}
+            v-for="line in backlogFilter(orderedBacklog)"
+            :key="line.uid"
+            class="backlog__line-container hljs">
+            <div
+              v-if="showTimestamp"
+              class="backlog__line-timestamp">
+              {{ line.dateString }}
+            </div>
+            <div
+              v-highlightjs="line.html"
+              v-if="line.isJSON"
+              class="backlog__line-content backlog__line-content-highlight">
+              <pre><code class="json"/></pre>
+            </div>
+            <div
+              v-if="!line.isJSON"
+              class="backlog__line-content backlog__line-content-text"
+              v-html="line.html"/>
           </div>
-          <div
-            v-highlightjs="line.html"
-            v-if="line.isJSON"
-            class="backlog__line-content backlog__line-content-highlight">
-            <pre><code class="json"/></pre>
-          </div>
-          <div
-            v-if="!line.isJSON"
-            class="backlog__line-content backlog__line-content-text"
-            v-html="line.html"/>
-        </div>
+        </transition-group>
       </div>
     </md-content>
   </div>
 </template>
 
 <script>
-import fecha from 'fecha';
 import { mapState, mapGetters } from 'vuex';
 
 export default {
   components: {},
-  filters: {
-    dateFormat(ts) {
-      return fecha.format(new Date(ts), 'MM/DD/YY hh:mm:ss');
-    },
-  },
   props: {
     streamId: {
       type: String,
@@ -125,6 +121,9 @@ export default {
       this.$store.commit('activeStreamClose', { streamId });
     },
     backlogFilter(backlog = []) {
+      const filter = (this.streamLineFilter || '').trim();
+      if (!filter) return backlog;
+
       const regExp = new RegExp(this.streamLineFilter);
       return backlog.filter(line => regExp.test(line.content));
     },
@@ -147,6 +146,12 @@ export default {
   align-items: center;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
+.backlog__line-transition-enter-active {
+  transition: background-color 1s;
+}
+.backlog__line-transition-enter {
+  background-color: #98f598;
+}
 .backlog__line-timestamp {
   width: 115px;
   font-size: 0.8em;
@@ -166,5 +171,8 @@ export default {
 }
 .stream-content__filter {
   max-width: 200px;
+}
+.backlog__line-content-highlight .hljs {
+  background-color: inherit;
 }
 </style>
