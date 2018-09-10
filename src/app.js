@@ -16,8 +16,7 @@ import VueHighlightJS from './plugins/vue-highlightjs';
 Vue.use(VueScroll);
 Vue.use(VueMaterial);
 Vue.use(VueHighlightJS);
-// Vue.use(VueSocketio, document.location.origin, store);
-Vue.use(VueSocketio, 'http://localhost:8888', store);
+Vue.use(VueSocketio, document.location.origin, store);
 
 window.app = new Vue({
   router,
