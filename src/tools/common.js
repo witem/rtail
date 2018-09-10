@@ -1,4 +1,5 @@
-const AnsiUp = require('ansi_up');
+import * as AnsiUp from 'ansi_up';
+import fecha from 'fecha';
 
 const ansiUp = new AnsiUp.default(); // eslint-disable-line new-cap
 ansiUp.use_classes = true;
@@ -26,6 +27,7 @@ const formatLine = (line) => {
 
   result.html = content;
   result.uid = `${Date.now()}${~~(Math.random() * 10000)}`;
+  result.dateString = fecha.format(new Date(line.timestamp), 'MM/DD/YY hh:mm:ss');
 
   return result;
 };

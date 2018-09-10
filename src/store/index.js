@@ -43,10 +43,14 @@ const filterFavoriteStreams = function filterFavoriteStreams(streams, isFavorite
 const getters = {
   backlogDESC: state => (streamId) => {
     if (!state.backlogByStream[streamId]) {
-      Vue.set(state.backlogByStream, streamId, { backlog: [] });
+      Vue.set(state.backlogByStream, streamId, { backlog: [], backlogDESC: [] });
     }
 
-    return orderBy(state.backlogByStream[streamId].backlog, 'timestamp', [state.settings.sorting]);
+    if (state.settings.sorting === 'desc') {
+      return state.backlogByStream[streamId].backlogDESC;
+    }
+
+    return state.backlogByStream[streamId].backlog;
   },
   streamsFavorites: state => filterFavoriteStreams(state.streams, true),
   streamsNotFavorites: state => filterFavoriteStreams(state.streams, false),
@@ -101,7 +105,7 @@ const mutations = {
   SOCKET_BACKLOG(state, message) {
     const data = message[0];
     if (!state.backlogByStream[data.id]) {
-      Vue.set(state.backlogByStream, data.id, { backlog: [] });
+      Vue.set(state.backlogByStream, data.id, { backlog: [], backlogDESC: [] });
     }
 
     const stream = state.backlogByStream[data.id];
@@ -109,18 +113,25 @@ const mutations = {
     Vue.set(stream, 'group', data.group);
     Vue.set(stream, 'backlogLimit', data.backlogLimit);
     stream.backlog.splice(0);
-    data.backlog.forEach(line => state.backlogByStream[data.id].backlog.splice(Infinity, 0, formatLine(line)));
+    stream.backlogDESC.splice(0);
+    orderBy(data.backlog, 'timestamp', ['asc'])
+      .forEach(line => state.backlogByStream[data.id].backlog.splice(Infinity, 0, formatLine(line)));
+    orderBy(data.backlog, 'timestamp', ['desc'])
+      .forEach(line => state.backlogByStream[data.id].backlogDESC.splice(Infinity, 0, formatLine(line)));
   },
 
   SOCKET_LINE(state, message) {
     const data = message[0];
     if (!state.backlogByStream[data.id]) return;
 
-    const { backlog } = state.backlogByStream[data.id];
-    backlog.splice(backlog.length, 0, formatLine(data));
-    if (backlog.length > state.backlogByStream[data.id].backlogLimit) {
-      backlog.shift();
-    }
+    const { backlog, backlogDESC } = state.backlogByStream[data.id];
+    // backlog.splice(backlog.length, 0, formatLine(data));
+    const formatedLine = formatLine(data);
+    backlog.push(formatedLine);
+    if (backlog.length > state.backlogByStream[data.id].backlogLimit) backlog.shift();
+
+    backlogDESC.unshift(formatedLine);
+    if (backlogDESC.length > state.backlogByStream[data.id].backlogLimit) backlogDESC.pop();
   },
 
   toggleFavorite(state, { streamId, group }) {

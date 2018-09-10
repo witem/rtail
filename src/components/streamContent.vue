@@ -44,45 +44,53 @@
         class="md-accent"
         md-icon="remove_circle_outline"
         md-description="Select other stream or check your r-tail client" />
-      <div
+      <vue-scroll
         v-if="orderedBacklog.length"
-        class="backlog__wrapper">
-        <div
-          v-for="line in backlogFilter(orderedBacklog)"
-          :key="line.uid"
-          class="backlog__line-container hljs">
+        ref="scrollContent"
+        :ops="scrollbarOpts"
+        class="backlog__wrapper"
+        @handle-scroll="scrollHandle"
+        @handle-resize="scrollResize">
+        <transition-group
+          name="backlog__line-transition"
+          tag="div">
           <div
-            v-if="showTimestamp"
-            class="backlog__line-timestamp">
-            {{ line.timestamp | dateFormat }}
+            v-for="line in backlogFilter(orderedBacklog)"
+            :key="line.uid"
+            class="backlog__line-container hljs">
+            <div
+              v-if="showTimestamp"
+              class="backlog__line-timestamp">
+              {{ line.dateString }}
+            </div>
+            <div
+              v-highlightjs="line.html"
+              v-if="line.isJSON"
+              class="backlog__line-content backlog__line-content-highlight">
+              <pre><code class="json"/></pre>
+            </div>
+            <div
+              v-if="!line.isJSON"
+              class="backlog__line-content backlog__line-content-text"
+              v-html="line.html"/>
           </div>
-          <div
-            v-highlightjs="line.html"
-            v-if="line.isJSON"
-            class="backlog__line-content backlog__line-content-highlight">
-            <pre><code class="json"/></pre>
-          </div>
-          <div
-            v-if="!line.isJSON"
-            class="backlog__line-content backlog__line-content-text"
-            v-html="line.html"/>
-        </div>
-      </div>
+        </transition-group>
+      </vue-scroll>
+      <span
+        v-if="showResumeButton"
+        class="backlog-resume-btn"
+        @click="scrollResume()">
+        Resume
+      </span>
     </md-content>
   </div>
 </template>
 
 <script>
-import fecha from 'fecha';
 import { mapState, mapGetters } from 'vuex';
 
 export default {
   components: {},
-  filters: {
-    dateFormat(ts) {
-      return fecha.format(new Date(ts), 'MM/DD/YY hh:mm:ss');
-    },
-  },
   props: {
     streamId: {
       type: String,
@@ -91,7 +99,11 @@ export default {
   },
   data: () => ({
     showTimestamp: true,
+    showResumeButton: false,
     streamLineFilter: '',
+    scrollbarOpts: {
+      bar: { onlyShowBarOnScroll: false, keepShow: true },
+    },
   }),
   computed: {
     ...mapGetters([
@@ -101,6 +113,7 @@ export default {
     ...mapState({
       isloadingComplete: state => state.isStreamsLoaded,
       fontSize: state => state.settings.fontSize,
+      isDescOrder: state => state.settings.sorting === 'desc',
     }),
     orderedBacklog(state) {
       return this.$store.getters.backlogDESC(this.streamId);
@@ -125,8 +138,33 @@ export default {
       this.$store.commit('activeStreamClose', { streamId });
     },
     backlogFilter(backlog = []) {
+      const filter = (this.streamLineFilter || '').trim();
+      if (!filter) return backlog;
+
       const regExp = new RegExp(this.streamLineFilter);
       return backlog.filter(line => regExp.test(line.content));
+    },
+    scrollHandle(vertical) {
+      this.showResumeButton = this.isDescOrder ? vertical.process > 0 : vertical.process < 1;
+    },
+    scrollResize(vertical) {
+      if (this.showResumeButton) {
+        this.showResumeButton = this.isDescOrder ? vertical.process > 0 : vertical.process < 1;
+      }
+
+      if (!this.showResumeButton && !this.isDescOrder) {
+        const doms = this.$refs['scrollContent'].getCurrentviewDom();
+        this.$refs['scrollContent'].scrollTo({ y: doms[0].clientHeight }, false);
+      }
+    },
+    scrollResume() {
+      let scrollToY = 0;
+      if (!this.isDescOrder) {
+        const doms = this.$refs['scrollContent'].getCurrentviewDom();
+        scrollToY = doms[0].clientHeight;
+      }
+
+      this.$refs['scrollContent'].scrollTo({ y: scrollToY });
     },
   },
 };
@@ -136,7 +174,6 @@ export default {
 .backlog {
   max-height: calc(100% - 48px);
   height: 100%;
-  overflow: auto;
 }
 .backlog__line-container.hljs {
   padding: 5px 0;
@@ -146,6 +183,12 @@ export default {
   flex-wrap: nowrap;
   align-items: center;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+.backlog__line-transition-enter-active {
+  transition: background-color 1s;
+}
+.backlog__line-transition-enter {
+  background-color: #98f598;
 }
 .backlog__line-timestamp {
   width: 115px;
@@ -166,5 +209,17 @@ export default {
 }
 .stream-content__filter {
   max-width: 200px;
+}
+.backlog__line-content-highlight .hljs {
+  background-color: inherit;
+}
+.backlog-resume-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 5px 20px;
+    border-radius: 15px;
+    background-color: #a0fba0;
+    cursor: pointer;
 }
 </style>
