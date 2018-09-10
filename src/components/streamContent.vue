@@ -153,18 +153,18 @@ export default {
       }
 
       if (!this.showResumeButton && !this.isDescOrder) {
-        const doms = this.$refs['scrollContent'].getCurrentviewDom();
-        this.$refs['scrollContent'].scrollTo({ y: doms[0].clientHeight }, false);
+        const doms = this.$refs.scrollContent.getCurrentviewDom();
+        this.$refs.scrollContent.scrollTo({ y: doms[0].clientHeight }, false);
       }
     },
     scrollResume() {
       let scrollToY = 0;
       if (!this.isDescOrder) {
-        const doms = this.$refs['scrollContent'].getCurrentviewDom();
+        const doms = this.$refs.scrollContent.getCurrentviewDom();
         scrollToY = doms[0].clientHeight;
       }
 
-      this.$refs['scrollContent'].scrollTo({ y: scrollToY });
+      this.$refs.scrollContent.scrollTo({ y: scrollToY });
     },
   },
 };
