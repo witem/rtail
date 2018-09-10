@@ -44,10 +44,16 @@
         class="md-accent"
         md-icon="remove_circle_outline"
         md-description="Select other stream or check your r-tail client" />
-      <div
+      <vue-scroll
         v-if="orderedBacklog.length"
-        class="backlog__wrapper">
-        <transition-group name="backlog__line-transition" tag="div">
+        ref="scrollContent"
+        :ops="scrollbarOpts"
+        class="backlog__wrapper"
+        @handle-scroll="scrollHandle"
+        @handle-resize="scrollResize">
+        <transition-group
+          name="backlog__line-transition"
+          tag="div">
           <div
             v-for="line in backlogFilter(orderedBacklog)"
             :key="line.uid"
@@ -69,7 +75,13 @@
               v-html="line.html"/>
           </div>
         </transition-group>
-      </div>
+      </vue-scroll>
+      <span
+        v-if="showResumeButton"
+        class="backlog-resume-btn"
+        @click="scrollResume()">
+        Resume
+      </span>
     </md-content>
   </div>
 </template>
@@ -87,7 +99,11 @@ export default {
   },
   data: () => ({
     showTimestamp: true,
+    showResumeButton: false,
     streamLineFilter: '',
+    scrollbarOpts: {
+      bar: { onlyShowBarOnScroll: false, keepShow: true },
+    },
   }),
   computed: {
     ...mapGetters([
@@ -97,6 +113,7 @@ export default {
     ...mapState({
       isloadingComplete: state => state.isStreamsLoaded,
       fontSize: state => state.settings.fontSize,
+      isDescOrder: state => state.settings.sorting === 'desc',
     }),
     orderedBacklog(state) {
       return this.$store.getters.backlogDESC(this.streamId);
@@ -127,6 +144,28 @@ export default {
       const regExp = new RegExp(this.streamLineFilter);
       return backlog.filter(line => regExp.test(line.content));
     },
+    scrollHandle(vertical) {
+      this.showResumeButton = this.isDescOrder ? vertical.process > 0 : vertical.process < 1;
+    },
+    scrollResize(vertical) {
+      if (this.showResumeButton) {
+        this.showResumeButton = this.isDescOrder ? vertical.process > 0 : vertical.process < 1;
+      }
+
+      if (!this.showResumeButton && !this.isDescOrder) {
+        const doms = this.$refs['scrollContent'].getCurrentviewDom();
+        this.$refs['scrollContent'].scrollTo({ y: doms[0].clientHeight }, false);
+      }
+    },
+    scrollResume() {
+      let scrollToY = 0;
+      if (!this.isDescOrder) {
+        const doms = this.$refs['scrollContent'].getCurrentviewDom();
+        scrollToY = doms[0].clientHeight;
+      }
+
+      this.$refs['scrollContent'].scrollTo({ y: scrollToY });
+    },
   },
 };
 </script>
@@ -135,7 +174,6 @@ export default {
 .backlog {
   max-height: calc(100% - 48px);
   height: 100%;
-  overflow: auto;
 }
 .backlog__line-container.hljs {
   padding: 5px 0;
@@ -174,5 +212,14 @@ export default {
 }
 .backlog__line-content-highlight .hljs {
   background-color: inherit;
+}
+.backlog-resume-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 5px 20px;
+    border-radius: 15px;
+    background-color: #a0fba0;
+    cursor: pointer;
 }
 </style>

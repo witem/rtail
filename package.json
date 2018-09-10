@@ -75,6 +75,7 @@
     "vue-socket.io": "^2.1.1-b",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.2.6",
+    "vuescroll": "^4.8.10",
     "vuex": "^2.0.0",
     "vuex-persistedstate": "^2.5.4",
     "webpack": "3.0.0",
