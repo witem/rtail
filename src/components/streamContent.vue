@@ -172,7 +172,7 @@ export default {
 
 <style>
 .backlog {
-  max-height: calc(100% - 48px);
+  max-height: calc(100% - 64px);
   height: 100%;
 }
 .backlog__line-container.hljs {
