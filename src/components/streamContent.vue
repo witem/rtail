@@ -51,30 +51,26 @@
         class="backlog__wrapper"
         @handle-scroll="scrollHandle"
         @handle-resize="scrollResize">
-        <transition-group
-          name="backlog__line-transition"
-          tag="div">
+        <div
+          v-for="line in backlogFilter(orderedBacklog)"
+          :key="line.uid"
+          class="backlog__line-container hljs">
           <div
-            v-for="line in backlogFilter(orderedBacklog)"
-            :key="line.uid"
-            class="backlog__line-container hljs">
-            <div
-              v-if="showTimestamp"
-              class="backlog__line-timestamp">
-              {{ line.dateString }}
-            </div>
-            <div
-              v-highlightjs="line.html"
-              v-if="line.isJSON"
-              class="backlog__line-content backlog__line-content-highlight">
-              <pre><code class="json"/></pre>
-            </div>
-            <div
-              v-if="!line.isJSON"
-              class="backlog__line-content backlog__line-content-text"
-              v-html="line.html"/>
+            v-if="showTimestamp"
+            class="backlog__line-timestamp">
+            {{ line.dateString }}
           </div>
-        </transition-group>
+          <div
+            v-highlightjs="line.html"
+            v-if="line.isJSON"
+            class="backlog__line-content backlog__line-content-highlight">
+            <pre><code class="json"/></pre>
+          </div>
+          <div
+            v-if="!line.isJSON"
+            class="backlog__line-content backlog__line-content-text"
+            v-html="line.html"/>
+        </div>
       </vue-scroll>
       <span
         v-if="showResumeButton"
@@ -221,5 +217,8 @@ export default {
     border-radius: 15px;
     background-color: #a0fba0;
     cursor: pointer;
+}
+.backlog__wrapper .__view {
+  max-width: 100%;
 }
 </style>
