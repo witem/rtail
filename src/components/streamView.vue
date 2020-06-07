@@ -3,22 +3,23 @@
     <streamContent
       v-for="streamId in activeStreams"
       :key="streamId"
-      :stream-id="streamId"/>
+      :stream-id="streamId"
+    />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 
-import streamContent from '../components/streamContent.vue';
+import streamContent from './streamContent.vue';
 
 export default {
   components: {
     streamContent,
   },
   computed: mapState({
-    activeStreams: state => state.activeStreams,
-    isloadingComplete: state => state.isStreamsLoaded,
+    activeStreams: (state) => state.activeStreams,
+    isloadingComplete: (state) => state.isStreamsLoaded,
   }),
 };
 </script>

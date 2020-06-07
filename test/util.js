@@ -40,4 +40,4 @@ module.exports.spawnServer = (opts = {}) => {
   return server;
 };
 
-module.exports.s = obj => JSON.stringify(obj, null, '  ');
+module.exports.s = (obj) => JSON.stringify(obj, null, '  ');

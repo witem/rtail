@@ -2,27 +2,40 @@
   <div class="app-header">
     <md-toolbar
       class="md-accent app-header__toolbar"
-      md-elevation="1">
+      md-elevation="1"
+    >
       <h3
         class="md-title"
-        style="flex: 1">
-        <md-icon class="md-primary md-size-2x">accessible_forward</md-icon>
+        style="flex: 1"
+      >
+        <md-icon class="md-primary md-size-2x">
+          accessible_forward
+        </md-icon>
         r-Tail
       </h3>
       <md-button
         class="md-icon-button md-primary"
-        @click="copyUrl()">
-        <md-icon class="md-primary">share</md-icon>
-        <md-tooltip md-direction="bottom">Share link</md-tooltip>
+        @click="copyUrl()"
+      >
+        <md-icon class="md-primary">
+          share
+        </md-icon>
+        <md-tooltip md-direction="bottom">
+          Share link
+        </md-tooltip>
         <input
           ref="shareLink"
           :value="shareUrl"
-          type="hidden">
+          type="hidden"
+        >
       </md-button>
       <md-button
         class="md-icon-button md-primary"
-        @click="showSettings = true">
-        <md-icon class="md-primary">settings</md-icon>
+        @click="showSettings = true"
+      >
+        <md-icon class="md-primary">
+          settings
+        </md-icon>
       </md-button>
     </md-toolbar>
 
@@ -34,21 +47,24 @@
           <md-button
             :disabled="fontSize <= minFontSize"
             class="md-icon-button md-dense md-primary"
-            @click="changeFontsize(-1)">
+            @click="changeFontsize(-1)"
+          >
             <md-icon>text_rotate_vertical</md-icon>
           </md-button>
 
           <md-button
             :disabled="settingIsActive('fontSize', defaultFontSize)"
             class="md-icon-button md-dense md-primary"
-            @click="changeFontsize(0)">
+            @click="changeFontsize(0)"
+          >
             <md-icon>format_clear</md-icon>
           </md-button>
 
           <md-button
             :disabled="fontSize >= maxFontSize"
             class="md-icon-button md-dense md-primary"
-            @click="changeFontsize(1)">
+            @click="changeFontsize(1)"
+          >
             <md-icon>text_rotate_up</md-icon>
           </md-button>
         </div>
@@ -58,14 +74,16 @@
           <md-button
             :disabled="settingIsActive('sorting', 'acs')"
             class="md-icon-button md-dense md-primary"
-            @click="changeSorting('acs')">
+            @click="changeSorting('acs')"
+          >
             <md-icon>arrow_downward</md-icon>
           </md-button>
 
           <md-button
             :disabled="settingIsActive('sorting', 'desc')"
             class="md-icon-button md-dense md-primary"
-            @click="changeSorting('desc')">
+            @click="changeSorting('desc')"
+          >
             <md-icon>arrow_upward</md-icon>
           </md-button>
         </div>
@@ -75,14 +93,16 @@
           <md-button
             :disabled="settingIsActive('theme', 'dark')"
             class="md-icon-button md-dense md-primary"
-            @click="changeTheme('dark')">
+            @click="changeTheme('dark')"
+          >
             <md-icon>brightness_3</md-icon>
           </md-button>
 
           <md-button
             :disabled="settingIsActive('theme', 'white')"
             class="md-icon-button md-dense md-primary"
-            @click="changeTheme('white')">
+            @click="changeTheme('white')"
+          >
             <md-icon>wb_sunny</md-icon>
           </md-button>
         </div>
@@ -90,7 +110,8 @@
       <md-dialog-actions>
         <md-button
           class="md-primary"
-          @click="showSettings = false">
+          @click="showSettings = false"
+        >
           Close
         </md-button>
       </md-dialog-actions>
@@ -99,7 +120,8 @@
     <md-snackbar
       :md-active.sync="snackbarShow"
       md-position="left"
-      md-persistent>
+      md-persistent
+    >
       <span>{{ snackbarText }}</span>
     </md-snackbar>
   </div>

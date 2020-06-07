@@ -1,8 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// const CopyPlugin = require('copy-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const webpackConfig = {}; // init object
 const isProduction = process.env.NODE_ENV === 'production'; // production environment
@@ -63,15 +63,14 @@ webpackConfig.module = {
 webpackConfig.plugins = [
   new VueLoaderPlugin(),
   new HtmlWebpackPlugin({ template: './src/index.html' }),
-  new MiniCssExtractPlugin(),
-  /*
-  new CopyPlugin({
-    patterns: [
-      { context: 'src/images', from: '*', to: path.join(__dirname, 'dist', 'images') },
-    ],
+  new MiniCssExtractPlugin({
+    filename: isProduction ? '[name].[hash].css' : '[name].css',
   }),
-  */
 ];
+
+if (process.env.npm_config_report) {
+  webpackConfig.plugins.push(new BundleAnalyzerPlugin());
+}
 
 if (!isProduction) {
   webpackConfig.devServer = {

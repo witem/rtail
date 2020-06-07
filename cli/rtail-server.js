@@ -103,7 +103,7 @@ socket.on('message', (rawData, remote) => {
   currentStream.backlog.push(message);
 
   debug(JSON.stringify(message));
-  io.sockets.to(streamId).emit('line', Object.assign({}, message, { id: streamId }));
+  io.sockets.to(streamId).emit('line', { ...message, id: streamId });
 });
 
 /*!

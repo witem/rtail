@@ -28,7 +28,7 @@ const filterFavoriteStreams = function filterFavoriteStreams(streams, isFavorite
   return Object.keys(streams).reduce((result, streamId) => {
     const stream = streams[streamId];
     if (stream.childs) {
-      result[streamId] = Object.assign({}, stream, { childs: {} });
+      result[streamId] = { ...stream, childs: {} };
       result[streamId].childs = filterFavoriteStreams(stream.childs, isFavorite);
     }
 
@@ -41,7 +41,7 @@ const filterFavoriteStreams = function filterFavoriteStreams(streams, isFavorite
 };
 
 const getters = {
-  backlogDESC: state => (streamId) => {
+  backlogDESC: (state) => (streamId) => {
     if (!state.backlogByStream[streamId]) {
       Vue.set(state.backlogByStream, streamId, { backlog: [], backlogDESC: [] });
     }
@@ -52,17 +52,16 @@ const getters = {
 
     return state.backlogByStream[streamId].backlog;
   },
-  streamsFavorites: state => filterFavoriteStreams(state.streams, true),
-  streamsNotFavorites: state => filterFavoriteStreams(state.streams, false),
-  activeStreamIs: state => streamId => state.activeStreams.includes(streamId),
-  activeStreamIsLast: state => streamId => state.activeStreams.indexOf(streamId) === (state.activeStreams.length - 1),
-  activeStreamIsFirst: state => streamId => state.activeStreams.indexOf(streamId) === 0,
-  settingIsActive: state => (key, value) => (state.settings[key] == null ? false : state.settings[key] === value),
+  streamsFavorites: (state) => filterFavoriteStreams(state.streams, true),
+  streamsNotFavorites: (state) => filterFavoriteStreams(state.streams, false),
+  activeStreamIs: (state) => (streamId) => state.activeStreams.includes(streamId),
+  activeStreamIsLast: (state) => (streamId) => state.activeStreams.indexOf(streamId) === (state.activeStreams.length - 1),
+  activeStreamIsFirst: (state) => (streamId) => state.activeStreams.indexOf(streamId) === 0,
+  settingIsActive: (state) => (key, value) => (state.settings[key] == null ? false : state.settings[key] === value),
 };
 
 const mutations = {
   SOCKET_connect(state, status) {
-    console.log('socket connect');
     state.isConnected = true;
   },
 
@@ -71,11 +70,10 @@ const mutations = {
   },
 
   SOCKET_reconnect(state) {
-    state.activeStreams.forEach(streamId => window.app.$socket.emit('streamSubscribe', streamId));
+    state.activeStreams.forEach((streamId) => window.app.$socket.emit('streamSubscribe', streamId));
   },
 
   SOCKET_streams(state, data) {
-    console.log('streams', data);
     state.isStreamsLoaded = true;
     state.streams = data.reduce((result, stream) => {
       if (!stream.group) {
@@ -116,9 +114,9 @@ const mutations = {
     stream.backlog.splice(0);
     stream.backlogDESC.splice(0);
     orderBy(data.backlog, 'timestamp', ['asc'])
-      .forEach(line => state.backlogByStream[data.id].backlog.splice(Infinity, 0, formatLine(line)));
+      .forEach((line) => state.backlogByStream[data.id].backlog.splice(Infinity, 0, formatLine(line)));
     orderBy(data.backlog, 'timestamp', ['desc'])
-      .forEach(line => state.backlogByStream[data.id].backlogDESC.splice(Infinity, 0, formatLine(line)));
+      .forEach((line) => state.backlogByStream[data.id].backlogDESC.splice(Infinity, 0, formatLine(line)));
   },
 
   SOCKET_line(state, data) {
