@@ -61,21 +61,23 @@ const getters = {
 };
 
 const mutations = {
-  SOCKET_CONNECT(state, status) {
+  SOCKET_connect(state, status) {
+    console.log('socket connect');
     state.isConnected = true;
   },
 
-  SOCKET_DISCONNECT(state) {
+  SOCKET_disconnect(state) {
     state.isConnected = false;
   },
 
-  SOCKET_RECONNECT(state) {
+  SOCKET_reconnect(state) {
     state.activeStreams.forEach(streamId => window.app.$socket.emit('streamSubscribe', streamId));
   },
 
-  SOCKET_STREAMS(state, message) {
+  SOCKET_streams(state, data) {
+    console.log('streams', data);
     state.isStreamsLoaded = true;
-    state.streams = message[0].reduce((result, stream) => {
+    state.streams = data.reduce((result, stream) => {
       if (!stream.group) {
         result[stream.id] = {
           name: stream.id,
@@ -102,8 +104,7 @@ const mutations = {
     }, {});
   },
 
-  SOCKET_BACKLOG(state, message) {
-    const data = message[0];
+  SOCKET_backlog(state, data) {
     if (!state.backlogByStream[data.id]) {
       Vue.set(state.backlogByStream, data.id, { backlog: [], backlogDESC: [] });
     }
@@ -120,8 +121,7 @@ const mutations = {
       .forEach(line => state.backlogByStream[data.id].backlogDESC.splice(Infinity, 0, formatLine(line)));
   },
 
-  SOCKET_LINE(state, message) {
-    const data = message[0];
+  SOCKET_line(state, data) {
     if (!state.backlogByStream[data.id]) return;
 
     const { backlog, backlogDESC } = state.backlogByStream[data.id];

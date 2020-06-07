@@ -99,7 +99,6 @@
     <md-snackbar
       :md-active.sync="snackbarShow"
       md-position="left"
-      md-duration="5000"
       md-persistent>
       <span>{{ snackbarText }}</span>
     </md-snackbar>
@@ -121,7 +120,7 @@ export default {
 
   computed: {
     ...mapGetters(['settingIsActive']),
-    ...mapState('settings', ['fontSize']),
+    ...mapState({ fontSize: 'settings.fontSize' }),
     ...mapState(['activeStreams']),
     shareUrl() {
       return `${window.location.origin}/#/streams/${JSON.stringify(this.activeStreams)}`;

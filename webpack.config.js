@@ -1,11 +1,13 @@
-const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin'); // separate css
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// const CopyPlugin = require('copy-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const webpackConfig = {}; // init object
 const isProduction = process.env.NODE_ENV === 'production'; // production environment
+
+webpackConfig.mode = isProduction ? 'production' : 'development';
 
 // input
 webpackConfig.entry = {
@@ -24,10 +26,13 @@ webpackConfig.module = {
   rules: [
     {
       test: /\.css$/,
-      use: ExtractTextPlugin.extract({
-        fallback: 'style-loader',
-        use: 'css-loader',
-      }),
+      use: [{
+        loader: MiniCssExtractPlugin.loader,
+        options: {
+          hmr: !isProduction,
+          reloadAll: true,
+        },
+      }, 'css-loader'],
     },
     {
       test: /\.vue$/,
@@ -35,8 +40,13 @@ webpackConfig.module = {
     },
     {
       test: /\.js$/,
-      loader: 'babel-loader',
       exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env'],
+        },
+      },
     },
     {
       test: /\.(eot(|\?v=.*)|woff(|\?v=.*)|woff2(|\?v=.*)|ttf(|\?v=.*)|svg(|\?v=.*))$/,
@@ -51,16 +61,16 @@ webpackConfig.module = {
 };
 
 webpackConfig.plugins = [
+  new VueLoaderPlugin(),
   new HtmlWebpackPlugin({ template: './src/index.html' }),
-  new ExtractTextPlugin({
-    filename: isProduction ? 'app.[hash].css' : 'app.css',
+  new MiniCssExtractPlugin(),
+  /*
+  new CopyPlugin({
+    patterns: [
+      { context: 'src/images', from: '*', to: path.join(__dirname, 'dist', 'images') },
+    ],
   }),
-  new webpack.DefinePlugin({
-    'process.env': { NODE_ENV: '"production"' },
-  }),
-  new CopyWebpackPlugin([
-    { context: 'src/images', from: '*', to: path.join(__dirname, 'dist', 'images') },
-  ]),
+  */
 ];
 
 if (!isProduction) {
@@ -68,6 +78,11 @@ if (!isProduction) {
     contentBase: path.resolve(__dirname, 'dist'),
     compress: true,
     historyApiFallback: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+    },
   };
 }
 

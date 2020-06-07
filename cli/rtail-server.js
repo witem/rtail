@@ -114,11 +114,13 @@ io.on('connection', (clientSocket) => {
 
   clientSocket.on('streamUnsubscribe', (streamId) => {
     if (!streamId) return;
+
     clientSocket.leave(streamId);
   });
 
   clientSocket.on('streamSubscribe', (streamId) => {
     if (!streamId) return;
+
     clientSocket.join(streamId);
     const stream = streams[streamId];
     if (stream) {

@@ -26,7 +26,7 @@ const formatLine = (line) => {
   }
 
   result.html = content;
-  result.uid = `${Date.now()}${~~(Math.random() * 10000)}`;
+  result.uid = `${Date.now()}${line.timestamp}${~~(Math.random() * 10000)}`;
   result.dateString = fecha.format(new Date(line.timestamp), 'MM/DD/YY hh:mm:ss');
 
   return result;

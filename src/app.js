@@ -5,7 +5,7 @@ import 'vuescroll/dist/vuescroll.css';
 
 import Vue from 'vue';
 import VueScroll from 'vuescroll';
-import VueSocketio from 'vue-socket.io';
+import VueSocketIO from 'vue-socket.io';
 import VueMaterial from 'vue-material';
 
 import App from './app.vue';
@@ -16,10 +16,20 @@ import VueHighlightJS from './plugins/vue-highlightjs';
 Vue.use(VueScroll);
 Vue.use(VueMaterial);
 Vue.use(VueHighlightJS);
-Vue.use(VueSocketio, document.location.origin, store);
+Vue.use(new VueSocketIO({
+  debug: true,
+  // connection: document.location.origin,
+  connection: 'http://localhost:8888',
+  vuex: {
+    store,
+    actionPrefix: 'SOCKET_',
+    mutationPrefix: 'SOCKET_',
+  },
+  // options: { path: "/my-app/" } //Optional options
+}));
 
 window.app = new Vue({
   router,
   store,
-  render: h => h(App),
+  render: (h) => h(App),
 }).$mount('#app');
