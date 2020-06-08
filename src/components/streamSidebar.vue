@@ -2,17 +2,19 @@
   <div class="stream-sidebar">
     <md-field md-clearable>
       <label>Search streams</label>
-      <md-input v-model="streamsFilter"/>
+      <md-input v-model="streamsFilter" />
     </md-field>
     <md-content class="stream-sidebar__content md-scrollbar">
       <h4>Favorites</h4>
       <stream-list
         :streams="streamsFavorites"
-        :streams-filter="streamsFilter"/>
+        :streams-filter="streamsFilter"
+      />
       <h4>Streams</h4>
       <stream-list
         :streams="streamsNotFavorites"
-        :streams-filter="streamsFilter"/>
+        :streams-filter="streamsFilter"
+      />
     </md-content>
   </div>
 </template>
@@ -32,7 +34,7 @@ export default {
   computed: mapState({
     streamsFavorites() { return this.$store.getters.streamsFavorites; },
     streamsNotFavorites() { return this.$store.getters.streamsNotFavorites; },
-    isloadingComplete: state => state.isStreamsLoaded,
+    isloadingComplete: (state) => state.isStreamsLoaded,
   }),
 };
 </script>

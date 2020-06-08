@@ -3,15 +3,17 @@
     <Header />
     <md-app
       md-mode="fixed"
-      class="route-streams__app">
+      class="route-streams__app"
+    >
       <md-app-drawer
         class="route-streams__sidebar"
-        md-permanent="full">
-        <Stream-sidebar/>
+        md-permanent="full"
+      >
+        <Stream-sidebar />
       </md-app-drawer>
 
       <md-app-content class="route-streams__content">
-        <StreamView/>
+        <StreamView />
       </md-app-content>
     </md-app>
   </div>

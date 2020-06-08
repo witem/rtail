@@ -1,4 +1,5 @@
-const hljs = require('highlight.js');
+const hljs = require('highlight.js/lib/core');
+hljs.registerLanguage('json', require('highlight.js/lib/languages/json'));
 
 const vueHighlightJS = {};
 
@@ -41,4 +42,3 @@ vueHighlightJS.install = function install(Vue) {
 };
 
 module.exports = vueHighlightJS;
-

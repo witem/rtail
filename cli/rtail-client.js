@@ -73,7 +73,7 @@ const argv = yargs // eslint-disable-line prefer-destructuring
 if (!argv.mute) {
   if (!process.stdout.isTTY || !argv.tty) {
     process.stdin
-      .pipe(map(chunk => stripAnsi(chunk.toString('utf8'))))
+      .pipe(map((chunk) => stripAnsi(chunk.toString('utf8'))))
       .pipe(process.stdout);
   } else {
     process.stdin.pipe(process.stdout);
@@ -99,7 +99,7 @@ socket.bind(() => {
 process.stdin
   .pipe(split(null, null, { trailing: false }))
   .on('data', (line) => {
-    const message = Object.assign({}, baseMessage, { content: line });
+    const message = { ...baseMessage, content: line };
     let timestamp = null;
 
     try {

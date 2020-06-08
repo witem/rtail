@@ -6,7 +6,7 @@ ansiUp.use_classes = true;
 ansiUp.escape_for_html = false;
 
 // https://github.com/component/escape-html/blob/master/index.js#L22
-const escapeHtml = html => String(html)
+const escapeHtml = (html) => String(html)
   .replace(/&/g, '&amp;')
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;')
@@ -14,7 +14,7 @@ const escapeHtml = html => String(html)
   .replace(/>/g, '&gt;');
 
 const formatLine = (line) => {
-  const result = Object.assign({}, line);
+  const result = { ...line };
   let content = result.content || '';
   result.isJSON = false;
 
@@ -26,11 +26,10 @@ const formatLine = (line) => {
   }
 
   result.html = content;
-  result.uid = `${Date.now()}${~~(Math.random() * 10000)}`;
-  result.dateString = fecha.format(new Date(line.timestamp), 'MM/DD/YY hh:mm:ss');
+  result.uid = `${Date.now()}${line.timestamp}${~~(Math.random() * 10000)}`;
+  result.dateString = fecha.format(new Date(line.timestamp), 'MM/DD/YY hh:mm:ss.SSS');
 
   return result;
 };
 
 export { formatLine, escapeHtml };
-
